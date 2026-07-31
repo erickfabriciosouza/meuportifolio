@@ -174,3 +174,16 @@ footer {
     background-color: var(--header-bg);
     color: var(--header-text);
 }
+
+.projeto-card h3 a.titulo-projeto {
+    margin-top: 0;
+    display: inline;
+    color: var(--text-color); 
+    text-decoration: none;
+    transition: color 0.3s ease; 
+}
+
+.projeto-card h3 a.titulo-projeto:hover {
+    color: var(--primary-color); 
+    text-decoration: underline;
+}
