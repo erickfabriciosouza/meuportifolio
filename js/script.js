@@ -13,7 +13,6 @@ form.addEventListener('submit', function(event) {
     const mensagem = document.getElementById('mensagem').value.trim();
 
     // Expressão Regular (Regex) básica para verificar o padrão de e-mail.
-    // Exige algo antes do @, o símbolo @, algo depois, o ponto (.), e a terminação do domínio.
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Etapa de Validação 1: Verifica se há algum campo obrigatório em branco
@@ -28,11 +27,45 @@ form.addEventListener('submit', function(event) {
         return;
     }
 
-    // Simulação do Envio: Se passar pelas validações acima, exibe a mensagem de sucesso
-    alert('Mensagem enviada com sucesso! Obrigado pelo contato, ' + nome + '.');
+    // --- LÓGICA DE ENVIO DIRETO (FORMSPREE) ---
     
-    // O método .reset() limpa todos os campos do formulário para um novo preenchimento
-    form.reset();
+    // Altera visualmente o botão para dar feedback ao usuário
+    const btnSubmit = form.querySelector('button[type="submit"]');
+    const textoOriginal = btnSubmit.innerText;
+    btnSubmit.innerText = 'Enviando...';
+
+    // Captura todos os campos e valores do formulário
+    const formData = new FormData(form);
+
+    // O seu endpoint exclusivo do Formspree
+    const endpoint = 'https://formspree.io/f/xbdnvrzn';
+
+    // Dispara a requisição de forma invisível (AJAX)
+    fetch(endpoint, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            // Sucesso!
+            alert('Mensagem enviada com sucesso! Obrigado pelo contato, ' + nome + '.');
+            form.reset(); // Limpa todos os campos do formulário para um novo preenchimento
+        } else {
+            // Erro na resposta da API
+            alert('Ocorreu um erro ao enviar a mensagem. Tente novamente.');
+        }
+    })
+    .catch(error => {
+        // Erro de rede (ex: usuário sem internet)
+        alert('Erro de conexão. Verifique sua internet e tente novamente.');
+    })
+    .finally(() => {
+        // Restaura o texto do botão, independentemente de dar erro ou sucesso
+        btnSubmit.innerText = textoOriginal;
+    });
 });
 
 // Funcionalidade Adicional: Botão para Alternar Tema Claro/Escuro
